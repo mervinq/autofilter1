@@ -1,4 +1,5 @@
 from typing import Dict, List
+
 def escape_invalid_curly_brackets(text: str, valids: List[str]) -> str:
     new_text = ""
     idx = 0
