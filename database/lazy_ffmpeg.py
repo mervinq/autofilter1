@@ -9,7 +9,7 @@ async def fix_thumb(c_thumb):
     width = 0
     height = 0
     try:
-        if c_thumb != None:
+        if c_thumb is not None:
             metadata = extractMetadata(createParser(c_thumb))
             if metadata.has("width"):
                 width = metadata.get("width")
@@ -21,13 +21,13 @@ async def fix_thumb(c_thumb):
                 img.save(c_thumb, "JPEG")
     except Exception as e:
         print(e)
-        c_thumb = None 
-       
+        c_thumb = None
+
     return width, height, c_thumb
-    
+
 async def take_screen_shot(video_file, output_directory, ttl):
-    out_put_file_name = f"{output_directory}/{time.time()}.jpg"
-    file_genertor_command = [
+    output_file_name = f"{output_directory}/{time.time()}.jpg"
+    file_generator_command = [
         "ffmpeg",
         "-ss",
         str(ttl),
@@ -35,16 +35,16 @@ async def take_screen_shot(video_file, output_directory, ttl):
         video_file,
         "-vframes",
         "1",
-        out_put_file_name
+        output_file_name
     ]
     process = await asyncio.create_subprocess_exec(
-        *file_genertor_command,
+        *file_generator_command,
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
     )
     stdout, stderr = await process.communicate()
-    e_response = stderr.decode().strip()
-    t_response = stdout.decode().strip()
-    if os.path.lexists(out_put_file_name):
-        return out_put_file_name
+    error_response = stderr.decode().strip()
+    terminal_response = stdout.decode().strip()
+    if os.path.lexists(output_file_name):
+        return output_file_name
     return None
