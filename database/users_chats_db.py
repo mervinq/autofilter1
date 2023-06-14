@@ -1,6 +1,6 @@
-# https://github.com/odysseusmax/animated-lamp/blob/master/bot/database/database.py
 import motor.motor_asyncio
 from info import DATABASE_NAME, DATABASE_URI, IMDB, IMDB_TEMPLATE, MELCOW_NEW_USERS, P_TTI_SHOW_OFF, SINGLE_BUTTON, SPELL_CHECK_REPLY, PROTECT_CONTENT
+
 
 class Database:
     
@@ -11,34 +11,34 @@ class Database:
         self.grp = self.db.groups
 
     def new_user(self, id, name):
-        return dict(
-            id = id,
-            name = name,
-            _id=int(id),                                   
-            file_id=None,
-            caption=None,
-            ban_status=dict(
-                is_banned=False,
-                ban_reason="",
-            ),
-        )
+        return {
+            'id': id,
+            'name': name,
+            '_id': int(id),
+            'file_id': None,
+            'caption': None,
+            'ban_status': {
+                'is_banned': False,
+                'ban_reason': "",
+            },
+        }
 
     def new_group(self, id, title):
-        return dict(
-            id = id,
-            title = title,
-            chat_status=dict(
-                is_disabled=False,
-                reason="",
-            ),
-        )
+        return {
+            'id': id,
+            'title': title,
+            'chat_status': {
+                'is_disabled': False,
+                'reason': "",
+            },
+        }
     
     async def add_user(self, id, name):
         user = self.new_user(id, name)
         await self.col.insert_one(user)
     
     async def is_user_exist(self, id):
-        user = await self.col.find_one({'id':int(id)})
+        user = await self.col.find_one({'id': int(id)})
         return bool(user)
     
     async def total_users_count(self):
@@ -46,25 +46,25 @@ class Database:
         return count
     
     async def remove_ban(self, id):
-        ban_status = dict(
-            is_banned=False,
-            ban_reason=''
-        )
+        ban_status = {
+            'is_banned': False,
+            'ban_reason': ''
+        }
         await self.col.update_one({'id': id}, {'$set': {'ban_status': ban_status}})
     
     async def ban_user(self, user_id, ban_reason="No Reason"):
-        ban_status = dict(
-            is_banned=True,
-            ban_reason=ban_reason
-        )
+        ban_status = {
+            'is_banned': True,
+            'ban_reason': ban_reason
+        }
         await self.col.update_one({'id': user_id}, {'$set': {'ban_status': ban_status}})
 
     async def get_ban_status(self, id):
-        default = dict(
-            is_banned=False,
-            ban_reason=''
-        )
-        user = await self.col.find_one({'id':int(id)})
+        default = {
+            'is_banned': False,
+            'ban_reason': ''
+        }
+        user = await self.col.find_one({'id': int(id)})
         if not user:
             return default
         return user.get('ban_status', default)
@@ -90,14 +90,14 @@ class Database:
     
 
     async def get_chat(self, chat):
-        chat = await self.grp.find_one({'id':int(chat)})
+        chat = await self.grp.find_one({'id': int(chat)})
         return False if not chat else chat.get('chat_status')
     
     async def re_enable_chat(self, id):
-        chat_status=dict(
-            is_disabled=False,
-            reason="",
-            )
+        chat_status = {
+            'is_disabled': False,
+            'reason': "",
+        }
         await self.grp.update_one({'id': int(id)}, {'$set': {'chat_status': chat_status}})
         
     async def update_settings(self, id, settings):
@@ -114,17 +114,17 @@ class Database:
             'welcome': MELCOW_NEW_USERS,
             'template': IMDB_TEMPLATE
         }
-        chat = await self.grp.find_one({'id':int(id)})
+        chat = await self.grp.find_one({'id': int(id)})
         if chat:
             return chat.get('settings', default)
         return default
     
 
     async def disable_chat(self, chat, reason="No Reason"):
-        chat_status=dict(
-            is_disabled=True,
-            reason=reason,
-            )
+        chat_status = {
+            'is_disabled': True,
+            'reason': reason,
+        }
         await self.grp.update_one({'id': int(chat)}, {'$set': {'chat_status': chat_status}})
     
 
@@ -140,12 +140,6 @@ class Database:
     async def get_db_size(self):
         return (await self.db.command("dbstats"))['dataSize']
     
-    # Credit @LazyDeveloper.
-    # Please Don't remove credit.
-        # Born to make history @LazyDeveloper ! => Remember this name forever <=
-
-    # Thank you LazyDeveloper for helping us in this Journey
-
     async def set_thumbnail(self, id, file_id):
         await self.col.update_one({'id': int(id)}, {'$set': {'file_id': file_id}})
         
@@ -158,8 +152,7 @@ class Database:
                 return None
         except Exception as e:
             print(e)
-    # Born to make history @LazyDeveloper ! => Remember this name forever <=
-
+    
     async def set_caption(self, id, caption):
         await self.col.update_one({'id': int(id)}, {'$set': {'caption': caption}})
 
