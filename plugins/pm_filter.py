@@ -1,6 +1,3 @@
-    # Credit @LazyDeveloper.
-    # Please Don't remove credit.
-    # Thank you LazyDeveloper for helping us in this Journey
 import asyncio
 import re
 import ast
