@@ -14,15 +14,15 @@ async def add_filter(grp_id, text, reply_text, button_text, file_size, file_name
     mycol = mydb[str(grp_id)]
 
     data = {
-        'text': str(text),
-        'reply': str(reply_text),
-        'button': str(button_text),
-        'file_size': str(file_size),
-        'file_name': str(file_name)
+        "text": str(text),
+        "reply": str(reply_text),
+        "button": str(button_text),
+        "file_size": str(file_size),
+        "file_name": str(file_name)
     }
 
     try:
-        mycol.update_one({'text': str(text)}, {"$set": data}, upsert=True)
+        mycol.update_one({"text": str(text)}, {"$set": data}, upsert=True)
     except:
         logger.exception('Some error occurred!', exc_info=True)
 
@@ -33,12 +33,12 @@ async def find_filter(group_id, name):
     query = mycol.find({"text": name})
     try:
         for file in query:
-            reply_text = file['reply']
-            button_text = file['button']
-            file_size = file['file_size']
-            file_name = file['file_name']
+            reply_text = file["reply"]
+            button_text = file["button"]
+            file_size = file["file_size"]
+            file_name = file["file_name"]
             try:
-                alert = file['alert']
+                alert = file["alert"]
             except:
                 alert = None
         return reply_text, button_text, alert, file_size, file_name
@@ -53,7 +53,7 @@ async def get_filters(group_id):
     query = mycol.find()
     try:
         for file in query:
-            text = file['text']
+            text = file["text"]
             texts.append(text)
     except:
         pass
@@ -63,7 +63,7 @@ async def get_filters(group_id):
 async def delete_filter(message, text, group_id):
     mycol = mydb[str(group_id)]
 
-    myquery = {'text': text}
+    myquery = {"text": text}
     query = mycol.count_documents(myquery)
     if query == 1:
         mycol.delete_one(myquery)
